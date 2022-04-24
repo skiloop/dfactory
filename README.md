@@ -1,3 +1,3 @@
-DataFlow
+DFactory
 ================
-a data flow handling framework
+a data pipeline framework
