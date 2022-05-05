@@ -110,6 +110,7 @@ class CombineUpdater(Updater):
         self.mapper = mapper
 
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
+        # TODO: replace with secure formatting
         return self.format.format(**{"source": item[key], "dest": self.mapper.get(item[self.key])})
 
     @staticmethod
@@ -125,6 +126,7 @@ class FormatUpdater(Updater):
         self.keys = keys
 
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
+        # TODO: replace with secure formatting
         return self.pattern.format(**{k: item[k] for k in self.keys})
 
     @staticmethod
