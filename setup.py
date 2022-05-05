@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # coding=utf-8
-
-
-import io
-import os
 import platform
 from os.path import join, dirname
 
@@ -12,9 +8,12 @@ try:
 except ImportError:
     from distutils.core import setup
 
-from distutils.extension import Extension
 
-PY_VERSION = platform.python_version_tuple()
+    def find_packages(exclude=None):
+        if exclude is None:
+            exclude = []
+        packages = ['dfactory', 'dfactory.framework']
+        return list(filter(lambda a: a not in exclude, packages))
 
 NAME = 'dfactory'
 DESCRIPTION = 'a data pipeline framework'
