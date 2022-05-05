@@ -2,7 +2,7 @@
 # coding=utf-8
 import importlib
 
-from . import Handler
+from .handlerbase import Handler
 from .converters import new_converter_from_dict
 from .writers import new_writer_from_dict
 
