@@ -26,4 +26,6 @@ def new_operator_from_dict(data: dict):
         return func(data)
     my_class = import_module(data["class"])
     if issubclass(my_class, Handler):
+        if hasattr(my_class, 'from_dict'):
+            return my_class.from_dict(data)
         return my_class()
