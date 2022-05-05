@@ -2,8 +2,8 @@
 # coding=utf-8
 # !/usr/bin/env python
 # coding=utf-8
-from dfactory.framework import Handler
-from dfactory.framework.common import new_operator_from_dict
+from .handlerbase import Handler
+from .common import new_operator_from_dict
 
 
 class LinkHandler(Handler):
