@@ -6,7 +6,6 @@ from .handlerbase import Handler
 
 
 def new_writer_from_dict(cfg: dict):
-    assert cfg.get('type') == 'writer' and 'class' in cfg
     if cfg['class'] == 'csv':
         return CsvWriter.from_dict(cfg)
     raise ValueError(f"unknown writer: {cfg['class']}")
@@ -74,7 +73,6 @@ class CsvWriter(Writer):
 
     @staticmethod
     def from_dict(data: dict):
-        assert 'path' in data
         kwargs = data.copy()
         kwargs.pop('key')
         return CsvWriter(data['path'], **kwargs)

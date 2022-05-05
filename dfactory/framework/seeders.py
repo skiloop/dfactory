@@ -48,5 +48,4 @@ class CsvSeeder(Seeder):
 
     @staticmethod
     def from_dict(data: dict):
-        assert "src" in data and "keys" in data
         return CsvSeeder(data['src'], data['keys'], data.get('sep', ','))

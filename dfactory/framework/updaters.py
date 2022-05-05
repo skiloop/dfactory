@@ -9,7 +9,6 @@ from .keymatcher import KeyMatcher
 
 
 def new_updater_from_dict(data: dict):
-    assert data.get('type') == 'updater' and 'class' in data
     if 'mapper' == data['class']:
         return MapperUpdater.from_dict(data)
     if 'regex' == data['class']:
@@ -46,7 +45,6 @@ class Updater(Handler):
             for key, value in self.key_matcher.items():
                 yield key, {"value": value}
         else:
-            assert isinstance(self.key_matcher, KeyMatcher)
             for key, value in self.key_matcher.iter(item):
                 yield key, value
 
@@ -188,6 +186,5 @@ class MapperUpdater(Updater):
 
     @staticmethod
     def from_dict(data: dict):
-        assert 'dependence' in data and 'value_maps' in data and 'key_matcher' in data
         matcher = Updater.form_matcher(data['key_matcher'])
         return MapperUpdater(matcher, data['dependence'], data['value_maps'])

@@ -20,8 +20,17 @@ class Pipeline:
                 break
         return obj
 
+    def exit(self):
+        for c in self.operators:
+            if hasattr(c, 'on_exit'):
+                c.on_exit()
+
+    def enter(self):
+        for c in self.operators:
+            if hasattr(c, 'on_enter'):
+                c.on_exit()
+
     def add(self, operator: Handler):
-        assert isinstance(operator, Handler)
         self.operators.append(operator)
 
     def load_from_dict(self, data: List[Dict]):
@@ -44,3 +53,10 @@ class Pipeline:
             if obj is None:
                 continue
             yield obj
+
+    def run(self, seeder: Seeder, fun=None):
+        self.enter()
+        for item in self.iter(seeder):
+            if fun:
+                fun(item)
+        self.exit()

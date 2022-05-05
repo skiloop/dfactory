@@ -41,7 +41,6 @@ class KeyMatch(Match):
 
     @staticmethod
     def from_dict(data: dict):
-        assert "key" in data and "value" in data
         return KeyMatch(data["key"], data["value"])
 
 
@@ -71,7 +70,6 @@ class RegexMatch(Match):
 
     @staticmethod
     def from_dict(data: dict):
-        assert "key" in data and "value" in data
         return RegexMatch(data["key"], data["value"], data.get('flag', 0))
 
 
@@ -85,7 +83,6 @@ class AndMatch(Match):
 
     @staticmethod
     def from_dict(data: dict):
-        assert "a" in data and "b" in data
         a, b = new_match_from_dict(data['a']), new_match_from_dict(data['b'])
         if a is None or b is None:
             raise ValueError('None type Match')
@@ -102,7 +99,6 @@ class OrMatch(Match):
 
     @staticmethod
     def from_dict(data: dict):
-        assert "a" in data and "b" in data
         a, b = new_match_from_dict(data['a']), new_match_from_dict(data['b'])
         if a is None or b is None:
             raise ValueError('None type Match')
@@ -118,7 +114,6 @@ class NotMatch(Match):
 
     @staticmethod
     def from_dict(data: dict):
-        assert "match" in data
         a = new_match_from_dict(data['match'])
         if a is None:
             raise ValueError('None type Match')
