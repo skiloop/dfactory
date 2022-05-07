@@ -9,7 +9,7 @@ from ..utils.json import read_json
 
 
 def new_converter_from_dict(data: dict):
-    if data["type"] == "dict":
+    if data["class"] == "dict":
         return DictConverter.from_dict(data)
     return Converter.from_dict(data)
 
