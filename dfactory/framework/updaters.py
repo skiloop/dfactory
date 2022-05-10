@@ -110,8 +110,7 @@ class CombineUpdater(Updater):
         self.mapper = mapper
 
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
-        # TODO: replace with secure formatting
-        return self.format.format(**{"source": item[key], "dest": self.mapper.get(item[self.key])})
+        return self.format.format_map({"source": item[key], "dest": self.mapper.get(item[self.key])})
 
     @staticmethod
     def from_dict(data: dict):
@@ -126,8 +125,7 @@ class FormatUpdater(Updater):
         self.keys = keys
 
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
-        # TODO: replace with secure formatting
-        return self.pattern.format(**{k: item[k] for k in self.keys})
+        return self.pattern.format_map({k: item[k] for k in self.keys})
 
     @staticmethod
     def from_dict(data: dict):
@@ -159,7 +157,7 @@ class MapperUpdater(Updater):
         self.key_dependence = key_dependence
         self.value_maps = value_maps
 
-    def get_new_value_on_single_key(self, key, item: Dict, options: Dict):
+    def get_new_value_on_single_key(self, key, item: Dict):
         dep_key = self.key_dependence[key]['key']
         item_key = self.key_dependence[key].get('item_key', key)
         values = self.value_maps[dep_key]
@@ -180,7 +178,7 @@ class MapperUpdater(Updater):
         if key not in self.key_dependence:
             return options.get('value')
         if isinstance(self.key_dependence[key]['key'], str):
-            return self.get_new_value_on_single_key(key, item, options)
+            return self.get_new_value_on_single_key(key, item)
         return self.get_new_value_on_multiple_keys(key, item, options)
 
     def log_empty_value(self, item, key):

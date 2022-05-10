@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
-import importlib
 
-from .handlerbase import Handler
 from .converters import new_converter_from_dict
+from .handlerbase import Handler
 from .writers import new_writer_from_dict
 
 __config__ = {

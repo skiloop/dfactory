@@ -41,7 +41,7 @@ class Writer(Handler):
 
 
 class CsvWriter(Writer):
-    def __init__(self, fn, *args, **kwargs):
+    def __init__(self, fn, **kwargs):
         self.fn = fn
         self.file = None
         self.sep = kwargs.get('separator', ",")

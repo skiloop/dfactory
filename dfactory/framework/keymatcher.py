@@ -51,7 +51,7 @@ class FormatKeyMatcher(KeyMatcher):
         self.keys = keys
 
     def iter(self, item: Dict):
-        yield self.format_str.format(**{k: item[k] for k in self.keys}), None
+        yield self.format_str.format_map({k: item[k] for k in self.keys}), None
 
     @staticmethod
     def from_dict(data):
