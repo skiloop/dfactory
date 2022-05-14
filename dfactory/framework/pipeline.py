@@ -46,7 +46,7 @@ class Pipeline:
         """
         for operator in self.operators:
             if hasattr(operator, 'on_enter'):
-                operator.on_exit()
+                operator.on_enter()
 
     def add(self, operator: Handler):
         """
