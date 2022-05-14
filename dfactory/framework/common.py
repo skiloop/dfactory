@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from importlib import import_module
+
 from .converters import new_converter_from_dict
 from .handlerbase import Handler
 from .writers import new_writer_from_dict
@@ -11,16 +13,16 @@ __config__ = {
 }
 
 
-def import_module(name: str):
+def import_class(class_path: str):
     """
-    import a module
-    :param name: module name with path
-    :return: module
+    import a class
+    :param class_path: class name with path
+    :return: class
     """
-    components = name.rsplit(".", 1)
+    components = class_path.rsplit(".", 1)
     if len(components) == 1 or "" == components[0]:
-        return __import__(name)
-    mod = __import__(components[0])
+        return import_module(class_path)
+    mod = import_module(components[0])
     mod = getattr(mod, components[1])
     return mod
 
@@ -34,7 +36,7 @@ def new_operator_from_dict(data: dict):
     func = __config__.get(data['type'])
     if func is not None:
         return func(data)
-    my_class = import_module(data["class"])
+    my_class = import_class(data["class"])
     if issubclass(my_class, Handler):
         if hasattr(my_class, 'from_dict'):
             return my_class.from_dict(data)
