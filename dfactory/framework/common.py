@@ -11,15 +11,26 @@ __config__ = {
 }
 
 
-def import_module(name):
-    components = name.split('.')
+def import_module(name: str):
+    """
+    import a module
+    :param name: module name with path
+    :return: module
+    """
+    components = name.rsplit(".", 1)
+    if len(components) == 1 or "" == components[0]:
+        return __import__(name)
     mod = __import__(components[0])
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
+    mod = getattr(mod, components[1])
     return mod
 
 
 def new_operator_from_dict(data: dict):
+    """
+    create a new operator object from dict
+    :param data: data to load operator
+    :return: operator object or None
+    """
     func = __config__.get(data['type'])
     if func is not None:
         return func(data)
