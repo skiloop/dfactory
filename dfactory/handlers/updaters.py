@@ -4,19 +4,8 @@ import abc
 import re
 from typing import Dict, Tuple, List
 
-from .handlerbase import Handler
+from dfactory.core import Handler
 from .keymatcher import KeyMatcher
-
-
-def new_updater_from_dict(data: dict):
-    if 'mapper' == data['class']:
-        return MapperUpdater.from_dict(data)
-    if 'regex' == data['class']:
-        return RegexUpdater.from_dict(data)
-    if 'combine' == data['class']:
-        return CombineUpdater.from_dict(data)
-    if 'format' == data['class']:
-        return FormatUpdater.from_dict(data)
 
 
 class Updater(Handler):
@@ -32,7 +21,7 @@ class Updater(Handler):
 
     """
 
-    def __init__(self, key_matcher):
+    def __init__(self, key_matcher=None):
         self.key_matcher = key_matcher
 
     def iter_update_keys(self, item: Dict) -> Tuple[str, Dict]:
@@ -72,19 +61,12 @@ class Updater(Handler):
             c[key] = value
         return c
 
-    @staticmethod
-    def form_matcher(matcher: Dict):
-        if "class" not in matcher:
-            return matcher["value"]
-        return KeyMatcher.from_dict(matcher)
-
-    @staticmethod
-    def from_dict(data: dict):
-        raise NotImplementedError('virtual function called')
+    def load_data(self, cfg: dict):
+        self.key_matcher = KeyMatcher.from_dict(cfg)
 
 
 class RegexUpdater(Updater):
-    def __init__(self, key_matcher, pattern: str, field: str = None, flags=0, replace=""):
+    def __init__(self, key_matcher=None, pattern: str = None, field: str = None, flags=0, replace=""):
         Updater.__init__(self, key_matcher)
         self.regex = re.compile(pattern, flags=flags)
         self.field = field
@@ -96,14 +78,15 @@ class RegexUpdater(Updater):
             return
         return self.regex.sub(self.replace, value)
 
-    @staticmethod
-    def from_dict(data: dict):
-        matcher = RegexUpdater.form_matcher(data['key_matcher'])
-        return RegexUpdater(matcher, data['pattern'], data.get('field'), data.get('flags', 0), data.get('replace', ''))
+    def load_data(self, cfg: dict):
+        super().load_data(cfg)
+        self.regex = re.compile(cfg['pattern'], cfg.get('flag', 0))
+        self.field = cfg['field']
+        self.replace = cfg['replace']
 
 
 class CombineUpdater(Updater):
-    def __init__(self, key_matcher, format_str: str, key: str, mapper: Dict[str, str]):
+    def __init__(self, key_matcher=None, format_str: str = None, key: str = None, mapper: Dict[str, str] = None):
         Updater.__init__(self, key_matcher)
         self.format = format_str
         self.key = key
@@ -112,10 +95,11 @@ class CombineUpdater(Updater):
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
         return self.format.format_map({"source": item[key], "dest": self.mapper.get(item[self.key])})
 
-    @staticmethod
-    def from_dict(data: dict):
-        matcher = Updater.form_matcher(data['key_matcher'])
-        return CombineUpdater(matcher, data['format'], data['key'], data['mapper'])
+    def load_data(self, cfg: dict):
+        super().load_data(cfg)
+        self.format = cfg['format']
+        self.key = cfg['key']
+        self.mapper = cfg['mapper']
 
 
 class FormatUpdater(Updater):
@@ -127,10 +111,10 @@ class FormatUpdater(Updater):
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
         return self.pattern.format_map({k: item[k] for k in self.keys})
 
-    @staticmethod
-    def from_dict(data: dict):
-        matcher = Updater.form_matcher(data['key_matcher'])
-        return FormatUpdater(matcher, data['pattern'], data['keys'])
+    def load_data(self, cfg: dict):
+        super().load_data(cfg)
+        self.pattern = cfg['pattern']
+        self.keys = cfg['keys']
 
 
 class MapperUpdater(Updater):
@@ -184,7 +168,7 @@ class MapperUpdater(Updater):
     def log_empty_value(self, item, key):
         print(f"{item.get(key)} depends on key item[{key}]{self.key_dependence.get(key)} got None")
 
-    @staticmethod
-    def from_dict(data: dict):
-        matcher = Updater.form_matcher(data['key_matcher'])
-        return MapperUpdater(matcher, data['dependence'], data['value_maps'])
+    def load_data(self, cfg: dict):
+        super().load_data(cfg)
+        self.key_dependence = cfg['dependence']
+        self.value_maps = cfg['value_maps']

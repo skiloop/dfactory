@@ -2,8 +2,7 @@
 # coding=utf-8
 # !/usr/bin/env python
 # coding=utf-8
-from .handlerbase import Handler
-from .common import new_operator_from_dict
+from dfactory.core import Handler
 
 
 class LinkHandler(Handler):
@@ -37,12 +36,9 @@ class LinkHandler(Handler):
                 return obj
         return item
 
-    @staticmethod
-    def from_dict(data):
-        h = LinkHandler()
-        h.matches = data["match"]
-        for item in data["handlers"]:
-            handler = new_operator_from_dict(item)
+    def load_data(self, cfg: dict):
+        self.matches = cfg["match"]
+        for item in cfg["handlers"]:
+            handler = self.from_dict(item)
             if handler is not None:
-                h.handlers.append(handler)
-        return h
+                self.handlers.append(handler)

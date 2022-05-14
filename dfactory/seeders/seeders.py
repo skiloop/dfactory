@@ -2,11 +2,7 @@
 # coding=utf-8
 from typing import List
 
-
-class Seeder:
-
-    def iter(self) -> dict:
-        raise NotImplementedError('virtual function called')
+from dfactory.core import Seeder
 
 
 class CsvSeeder(Seeder):
@@ -14,8 +10,8 @@ class CsvSeeder(Seeder):
     a seeder that generate dict item from csv file line by line
     """
 
-    def __init__(self, fn: str, keys: List[str], sep=","):
-        self.fn = fn
+    def __init__(self, src_fn: str, keys: List[str], sep=","):
+        self.src_fn = src_fn
         self._reader = None
         self.sep = sep
         self.keys = keys
@@ -41,7 +37,7 @@ class CsvSeeder(Seeder):
 
     def __enter__(self):
         if self._reader is None:
-            self._reader = open(self.fn)
+            self._reader = open(self.src_fn)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()

@@ -56,10 +56,3 @@ class FormatKeyMatcher(KeyMatcher):
     @staticmethod
     def from_dict(data):
         return FormatKeyMatcher(data['format'], data["keys"])
-
-
-__class_map__ = {
-    "list": ListKeyMatcher,
-    "regex": RegexKeyMatcher,
-    "format": FormatKeyMatcher,
-}

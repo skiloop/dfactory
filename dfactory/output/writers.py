@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
-import abc
 
-from .handlerbase import Handler
+from dfactory.core import Handler
 
 
 def new_writer_from_dict(cfg: dict):
@@ -11,38 +10,9 @@ def new_writer_from_dict(cfg: dict):
     raise ValueError(f"unknown writer: {cfg['class']}")
 
 
-class Writer(Handler):
-    """
-    基类
-    将数据流写入文件或者数据库等等输出设备
-    """
-
-    def __enter__(self):
-        self.on_create()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.on_destroy()
-
-    @abc.abstractmethod
-    def is_created(self) -> bool:
-        raise NotImplementedError('virtual function called')
-
-    @abc.abstractmethod
-    def on_create(self):
-        raise NotImplementedError('virtual function called')
-
-    @abc.abstractmethod
-    def on_destroy(self):
-        raise NotImplementedError('virtual function called')
-
-    @staticmethod
-    def from_dict(data: dict):
-        raise NotImplementedError('virtual function called')
-
-
-class CsvWriter(Writer):
-    def __init__(self, fn, **kwargs):
-        self.fn = fn
+class CsvWriter(Handler):
+    def __init__(self, **kwargs):
+        self.filename = kwargs["file"]
         self.file = None
         self.sep = kwargs.get('separator', ",")
         self.headers = kwargs.get('headers')
@@ -54,7 +24,7 @@ class CsvWriter(Writer):
 
     def on_create(self):
         try:
-            self.file = open(self.fn, "w")
+            self.file = open(self.filename, "w")
             self.prepare_format_fun()
             if self.headers is not None:
                 self.file.write(self.sep.join(self.headers) + "\n")
@@ -70,12 +40,20 @@ class CsvWriter(Writer):
     def on_destroy(self):
         if self.file is not None:
             self.file.close()
+        self.file = None
 
     @staticmethod
     def from_dict(data: dict):
         kwargs = data.copy()
         kwargs.pop('key')
         return CsvWriter(data['path'], **kwargs)
+
+    def load_data(self, cfg: dict):
+        self.on_destroy()
+        self.filename = cfg.get("path")
+        self.keys = cfg.get("keys")
+        self.headers = cfg.get("headers")
+        self.sep = cfg.get('separator', ",")
 
     def handle(self, item: dict):
         try:
