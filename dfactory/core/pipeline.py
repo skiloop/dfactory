@@ -86,9 +86,6 @@ class Pipeline(LoaderMixin):
         :return: None
         """
         self.enter()
-        if len(self.operators) == 0:
-            return
-        if not isinstance(self.operators[0], Seeder):
-            return
-        self.handle()
+        if len(self.operators) > 0:
+            self.handle()
         self.exit()
