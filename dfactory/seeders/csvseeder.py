@@ -31,7 +31,7 @@ class CsvSeeder(Seeder):
         """
         parts = line.split(self.sep, maxsplit=len(self.keys))
         if len(parts) != len(self.keys):
-            return
+            return None
         return {self.keys[k]: parts[k] for k in range(len(self.keys))}
 
     def close(self):
