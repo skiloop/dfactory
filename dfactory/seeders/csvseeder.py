@@ -10,7 +10,7 @@ class CsvSeeder(Seeder):
     """
 
     def __init__(self, **kwargs):
-        self.src_fn = kwargs["path"]
+        self.src_fn = kwargs.get("path")
         self._reader = None
         self.sep = kwargs.get("separator", ",")
         self.keys = kwargs.get("keys", [])
@@ -22,6 +22,12 @@ class CsvSeeder(Seeder):
                 if item is None:
                     continue
                 yield item
+
+    def load_data(self, cfg: dict):
+        self.close()
+        self.src_fn = cfg["path"]
+        self.sep = cfg.get("separator", self.sep)
+        self.keys = cfg["keys"]
 
     def line2item(self, line: str):
         """

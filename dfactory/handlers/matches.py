@@ -27,6 +27,7 @@ class KeyMatch(Match):
     """
 
     def __init__(self, key=None, value=None):
+        super(KeyMatch, self).__init__()
         self.key = key
         self.value = value
 
@@ -78,10 +79,9 @@ class RegexMatch(Match):
         """
         if isinstance(pattern, str):
             return re.compile(pattern, flag)
-        elif isinstance(pattern, re.Pattern):
+        if isinstance(pattern, re.Pattern):
             return pattern
-        else:
-            raise ValueError("invalid pattern type, only str or re.Pattern allowed")
+        raise ValueError("invalid pattern type, only str or re.Pattern allowed")
 
     def match(self, item: dict):
         return self.pattern.match(item.get(self.key))
@@ -97,37 +97,51 @@ class RegexMatch(Match):
 
 
 class AndMatch(Match):
-    def __init__(self, a: Match = None, b: Match = None):
-        self.a = a
-        self.b = b
+    """AND operator for Match"""
+
+    def __init__(self, match_a: Match = None, match_b: Match = None):
+        self.match_a = match_a
+        self.match_b = match_b
 
     def match(self, item: dict):
-        return self.a.match(item) and self.b.match(item)
+        return self.match_a.match(item) and self.match_b.match(item)
 
     def load_data(self, cfg: dict):
-        self.a = self.from_dict(cfg["a"])
-        self.b = self.from_dict(cfg["b"])
+        """load data from config"""
+        self.match_a = self.from_dict(cfg["a"])
+        self.match_b = self.from_dict(cfg["b"])
 
 
 class OrMatch(Match):
-    def __init__(self, a: Match = None, b: Match = None):
-        self.a = a
-        self.b = b
+    """or operator for Match"""
+
+    def __init__(self, match_a: Match = None, match_b: Match = None):
+        """
+        intializing of an OrMatch
+        :param match_a: Match object
+        :param match_b: Match object
+        """
+        self.match_a = match_a
+        self.match_b = match_b
 
     def match(self, item: dict):
-        return self.a.match(item) or self.b.match(item)
+        return self.match_a.match(item) or self.match_b.match(item)
 
     def load_data(self, cfg: dict):
-        self.a = self.from_dict(cfg["a"])
-        self.b = self.from_dict(cfg["b"])
+        """ load OrMatch from config"""
+        self.match_a = self.from_dict(cfg["a"])
+        self.match_b = self.from_dict(cfg["b"])
 
 
 class NotMatch(Match):
-    def __init__(self, a: Match = None):
-        self.a = a
+    """NOT operator for Match"""
+
+    def __init__(self, match: Match = None):
+        self.match = match
 
     def match(self, item: dict):
-        return not self.a.match(item)
+        return not self.match.match(item)
 
     def load_data(self, cfg: dict):
-        self.a = self.from_dict(cfg["a"])
+        """load NotMatch from config"""
+        self.match = self.from_dict(cfg["a"])

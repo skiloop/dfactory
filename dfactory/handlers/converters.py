@@ -4,7 +4,7 @@ from typing import List
 
 from dfactory.core import Handler, CondHandler
 from dfactory.handlers.matches import Match
-from dfactory.handlers.updaters import Updater, new_updater_from_dict
+from dfactory.handlers.updaters import Updater
 from dfactory.utils.json import read_json
 
 
@@ -36,19 +36,19 @@ class Converter(CondHandler):
             item = updater.handle(item)
         return item
 
-    def load_data(self, data: dict):
+    def load_data(self, cfg: dict):
         """
         construct new Converter from config
-        :param data: config data
+        :param cfg: config data
         :return: new Converter or None
         """
-        matcher = Match.from_dict(data['match'])
+        matcher = Match.from_dict(cfg['match'])
         updaters = []
-        if isinstance(data['updater'], dict):
-            updater = new_updater_from_dict(data['updater'])
+        if isinstance(cfg['updater'], dict):
+            updater = Updater.from_dict(cfg['updater'])
             updaters.append(updater)
-        elif isinstance(data['updater'], list):
-            updaters += [new_updater_from_dict(updater) for updater in data['updater']]
+        elif isinstance(cfg['updater'], list):
+            updaters += [Updater.from_dict(updater) for updater in cfg['updater']]
             updaters = list(filter(lambda a: a is not None, updaters))
         self.match = matcher
         self.updaters = updaters

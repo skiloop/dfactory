@@ -52,30 +52,48 @@ class Updater(Handler):
         pass
 
     def handle(self, item: dict) -> dict:
-        c = item.copy()
+        item_copy = item.copy()
         for key, opt in self.iter_update_keys(item):
             value = self.get_new_value(item, key, opt)
             if value is None:
                 self.log_empty_value(item, key)
                 continue
-            c[key] = value
-        return c
+            item_copy[key] = value
+        return item_copy
 
     def load_data(self, cfg: dict):
         self.key_matcher = KeyMatcher.from_dict(cfg)
 
 
 class RegexUpdater(Updater):
-    def __init__(self, key_matcher=None, pattern: str = None, field: str = None, flags=0, replace=""):
+    """update field with regex"""
+
+    def __init__(self, key_matcher=None, pattern: str = None,
+                 field: str = None, flags=0, replace=""):
+        """
+        initializing function
+        :param key_matcher: a Match, what items need to update
+        :param pattern: update pattern
+        :param field: field to update
+        :param flags: regex pattern flag, default 0
+        :param replace: regex replacement of the update field
+        """
         Updater.__init__(self, key_matcher)
         self.regex = re.compile(pattern, flags=flags)
         self.field = field
         self.replace = replace
 
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:
+        """
+        make new value for specified key
+        :param item: item to update
+        :param key: key to update
+        :param options: update options
+        :return: None if no update otherwise new value of the required field
+        """
         value = item.get(key if self.field is None else self.field)
         if value is None:
-            return
+            return None
         return self.regex.sub(self.replace, value)
 
     def load_data(self, cfg: dict):
@@ -86,6 +104,7 @@ class RegexUpdater(Updater):
 
 
 class CombineUpdater(Updater):
+    """an updater to combine two field"""
     def __init__(self, key_matcher=None, format_str: str = None, key: str = None, mapper: Dict[str, str] = None):
         Updater.__init__(self, key_matcher)
         self.format = format_str
@@ -103,6 +122,7 @@ class CombineUpdater(Updater):
 
 
 class FormatUpdater(Updater):
+    """format updater, update field with new format"""
     def __init__(self, key_matcher, pattern: str, keys: List[str] = None):
         Updater.__init__(self, key_matcher)
         self.pattern = pattern
@@ -142,6 +162,7 @@ class MapperUpdater(Updater):
         self.value_maps = value_maps
 
     def get_new_value_on_single_key(self, key, item: Dict):
+        """new value for single key"""
         dep_key = self.key_dependence[key]['key']
         item_key = self.key_dependence[key].get('item_key', key)
         values = self.value_maps[dep_key]
@@ -149,6 +170,7 @@ class MapperUpdater(Updater):
         return values.get(search_value)
 
     def get_new_value_on_multiple_keys(self, keys, item: Dict, options: Dict):
+        """get new value from multiple key"""
         raise NotImplementedError('not implement yet')
 
     def get_new_value(self, item: Dict, key: str, options: Dict) -> object:

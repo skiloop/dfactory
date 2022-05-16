@@ -57,27 +57,27 @@ class Pipeline(LoaderMixin):
         """
         self.operators.append(operator)
 
-    def load_data(self, data: dict):
+    def load_data(self, cfg: dict):
         """
         load operators from dict data
-        :param data: operators config
+        :param cfg: operators config
         :return: None
         """
-        self.seeder = Seeder.from_dict(data['seeder'])
-        for cfg in data['handlers']:
-            obj = Handler.from_dict(cfg)
+        self.seeder = Seeder.from_dict(cfg['seeder'])
+        for handler_cfg in cfg['handlers']:
+            obj = Handler.from_dict(handler_cfg)
             if obj is not None:
                 self.add(obj)
 
     @staticmethod
-    def from_dict(data: Dict):
+    def from_dict(cfg: Dict):
         """
         create Pipeline object from dict data
-        :param data: pipeline config
+        :param cfg: pipeline config
         :return: a new Pipeline object
         """
         pipeline = Pipeline()
-        pipeline.load_data(data)
+        pipeline.load_data(cfg)
         return pipeline
 
     def run(self):

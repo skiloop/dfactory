@@ -24,7 +24,7 @@ class CsvWriter(Handler):
     def on_create(self):
         """prepare data"""
         try:
-            self.file = open(self.filename, "w")
+            self.file = open(self.filename, "w", encoding="utf-8")
             self.prepare_format_fun()
             if self.headers is not None:
                 self.file.write(self.sep.join(self.headers) + "\n")
@@ -47,13 +47,13 @@ class CsvWriter(Handler):
         self.file = None
 
     @staticmethod
-    def from_dict(data: dict):
+    def from_dict(cfg: dict):
         """
         create a CsvWriter from data
         :param data: cfg data
         :return: new CsvWriter object
         """
-        return CsvWriter(**data)
+        return CsvWriter(**cfg)
 
     def load_data(self, cfg: dict):
         """

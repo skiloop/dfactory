@@ -4,55 +4,72 @@ import abc
 import re
 from typing import Dict, List
 
+from dfactory.core import LoaderMixin
+from dfactory.core.utils import import_class
 
-class KeyMatcher:
+
+class KeyMatcher(LoaderMixin):
 
     @abc.abstractmethod
     def iter(self, item: Dict):
         raise NotImplementedError("virtual function called")
 
     @staticmethod
-    def from_dict(data):
-        cls = __class_map__.get(data.get('class'))
-        if cls is not None:
-            return cls.from_dict(data)
+    def from_dict(cfg: dict):
+        """load a KeyMatcher from config"""
+        cfg_class = import_class(cfg["class"])
+        if cfg_class is not None and issubclass(cfg_class, KeyMatcher):
+            obj = cfg_class()
+            return obj
+        return None
 
 
 class ListKeyMatcher(KeyMatcher):
-    def __init__(self, keys: List[str]):
+    """
+    match if object has one of the keys
+    """
+
+    def __init__(self, keys: List[str] = None):
         self.keys = keys
 
     def iter(self, item: Dict):
         for key in self.keys:
             yield key, None
 
-    @staticmethod
-    def from_dict(data):
-        return ListKeyMatcher(data['keys'])
+    def load_data(self, cfg: dict):
+        """new ListKeyMatcher"""
+        self.keys = cfg["keys"]
 
 
 class RegexKeyMatcher(KeyMatcher):
-    def __init__(self, regex: str):
-        self.pattern = re.compile(regex)
+    """
+    regex key matcher
+    """
+
+    def __init__(self, regex: str = None):
+        self.pattern = re.compile(regex) if regex is not None else None
 
     def iter(self, item: Dict):
         for key in item.keys():
             if self.pattern.match(key):
                 yield key, None
 
-    @staticmethod
-    def from_dict(data):
-        return RegexKeyMatcher(data['regex'])
+    def load_data(self, cfg: dict):
+        self.pattern = re.compile(cfg["regex"], cfg.get("flag", 0))
 
 
 class FormatKeyMatcher(KeyMatcher):
-    def __init__(self, format_str: str, keys: List[str]):
+    """
+    format key matcher
+    """
+
+    def __init__(self, format_str: str = None, keys: List[str] = None):
         self.format_str = format_str
         self.keys = keys
 
     def iter(self, item: Dict):
         yield self.format_str.format_map({k: item[k] for k in self.keys}), None
 
-    @staticmethod
-    def from_dict(data):
-        return FormatKeyMatcher(data['format'], data["keys"])
+    def load_data(self, cfg: dict):
+        self.format_str = cfg["format"]
+        self.keys = cfg["keys"]
