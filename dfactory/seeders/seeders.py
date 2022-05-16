@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # coding=utf-8
-from typing import List
 
 from dfactory.core import Seeder
 
@@ -10,11 +9,11 @@ class CsvSeeder(Seeder):
     a seeder that generate dict item from csv file line by line
     """
 
-    def __init__(self, src_fn: str, keys: List[str], sep=","):
-        self.src_fn = src_fn
+    def __init__(self, **kwargs):
+        self.src_fn = kwargs["src"]
         self._reader = None
-        self.sep = sep
-        self.keys = keys
+        self.sep = kwargs.get("separator", ",")
+        self.keys = kwargs.get("keys", [])
 
     def iter(self):
         with self:
@@ -44,4 +43,5 @@ class CsvSeeder(Seeder):
 
     @staticmethod
     def from_dict(data: dict):
-        return CsvSeeder(data['src'], data['keys'], data.get('sep', ','))
+        """create a CsvSeeder from configure"""
+        return CsvSeeder(**data)

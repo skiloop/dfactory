@@ -4,15 +4,13 @@
 from dfactory.core import Handler
 
 
-def new_writer_from_dict(cfg: dict):
-    if cfg['class'] == 'csv':
-        return CsvWriter.from_dict(cfg)
-    raise ValueError(f"unknown writer: {cfg['class']}")
-
-
 class CsvWriter(Handler):
+    """
+    csv output
+    """
+
     def __init__(self, **kwargs):
-        self.filename = kwargs["file"]
+        self.filename = kwargs["path"]
         self.file = None
         self.sep = kwargs.get('separator', ",")
         self.headers = kwargs.get('headers')
@@ -20,9 +18,11 @@ class CsvWriter(Handler):
         self.format = None
 
     def is_created(self) -> bool:
+        """check if writer ready to write"""
         return self.file is not None
 
     def on_create(self):
+        """prepare data"""
         try:
             self.file = open(self.filename, "w")
             self.prepare_format_fun()
@@ -32,23 +32,35 @@ class CsvWriter(Handler):
             pass
 
     def prepare_format_fun(self):
+        """ prepare output format"""
         if self.keys is not None:
             self.format = lambda a: self.sep.join([str(a[k]) for k in self.keys])
         else:
             self.format = lambda a: self.sep.join([str(a[k]) for k in a])
 
     def on_destroy(self):
+        """
+        close file if necessary
+        """
         if self.file is not None:
             self.file.close()
         self.file = None
 
     @staticmethod
     def from_dict(data: dict):
-        kwargs = data.copy()
-        kwargs.pop('key')
-        return CsvWriter(data['path'], **kwargs)
+        """
+        create a CsvWriter from data
+        :param data: cfg data
+        :return: new CsvWriter object
+        """
+        return CsvWriter(**data)
 
     def load_data(self, cfg: dict):
+        """
+        load data
+        :param cfg: config data
+        :return: None
+        """
         self.on_destroy()
         self.filename = cfg.get("path")
         self.keys = cfg.get("keys")
@@ -56,6 +68,11 @@ class CsvWriter(Handler):
         self.sep = cfg.get('separator', ",")
 
     def handle(self, item: dict):
+        """
+        save item to csv file
+        :param item: item to handle
+        :return: the same item
+        """
         try:
             self.file.write(self.format(item))
             self.file.write("\n")
