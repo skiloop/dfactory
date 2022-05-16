@@ -10,7 +10,7 @@ class CsvSeeder(Seeder):
     """
 
     def __init__(self, **kwargs):
-        self.src_fn = kwargs["src"]
+        self.src_fn = kwargs["path"]
         self._reader = None
         self.sep = kwargs.get("separator", ",")
         self.keys = kwargs.get("keys", [])
@@ -24,12 +24,21 @@ class CsvSeeder(Seeder):
                 yield item
 
     def line2item(self, line: str):
+        """
+        convert text line to item
+        :param line: line from source file
+        :return: None if no more item else a item of type dict
+        """
         parts = line.split(self.sep, maxsplit=len(self.keys))
         if len(parts) != len(self.keys):
             return
         return {self.keys[k]: parts[k] for k in range(len(self.keys))}
 
     def close(self):
+        """
+        close file
+        :return:  None
+        """
         if self._reader is not None:
             self._reader.close()
         self._reader = None
@@ -42,6 +51,6 @@ class CsvSeeder(Seeder):
         self.close()
 
     @staticmethod
-    def from_dict(data: dict):
+    def from_dict(cfg: dict):
         """create a CsvSeeder from configure"""
-        return CsvSeeder(**data)
+        return CsvSeeder(**cfg)
