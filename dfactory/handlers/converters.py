@@ -1,11 +1,15 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
+"""
+Converters are item modifiers
+"""
+
 from typing import List
 
 from dfactory.core import Handler, CondHandler
 from dfactory.handlers.matches import Match
 from dfactory.handlers.updaters import Updater
-from dfactory.utils.json import read_json
+from dfactory.utils.jsonutils import read_json
 
 
 class Converter(CondHandler):

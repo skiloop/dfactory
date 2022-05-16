@@ -1,5 +1,6 @@
-#!/usr/bin/env python
-# coding=utf-8
+"""
+Seeders are classes to feed Pipeline
+"""
 
 from .csvseeder import CsvSeeder
 

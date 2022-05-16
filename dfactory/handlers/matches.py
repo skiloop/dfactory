@@ -1,5 +1,11 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
+"""
+Match
+
+describe rules if item match
+"""
+
 import abc
 import re
 
@@ -27,7 +33,7 @@ class KeyMatch(Match):
     """
 
     def __init__(self, key=None, value=None):
-        super(KeyMatch, self).__init__()
+        super().__init__()
         self.key = key
         self.value = value
 

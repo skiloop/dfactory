@@ -1,6 +1,8 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
+"""
+csv seeder
+"""
 from dfactory.core import Seeder
 
 
@@ -51,7 +53,7 @@ class CsvSeeder(Seeder):
 
     def __enter__(self):
         if self._reader is None:
-            self._reader = open(self.src_fn)
+            self._reader = open(self.src_fn, encoding="utf-8")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()

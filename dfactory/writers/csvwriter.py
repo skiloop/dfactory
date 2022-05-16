@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
+"""
+csv writer
+"""
 
 from dfactory.core import Handler
 
@@ -50,7 +53,7 @@ class CsvWriter(Handler):
     def from_dict(cfg: dict):
         """
         create a CsvWriter from data
-        :param data: cfg data
+        :param cfg: cfg data
         :return: new CsvWriter object
         """
         return CsvWriter(**cfg)

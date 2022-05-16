@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-# coding=utf-8
-
+"""
+logic handlers
+"""
 from dfactory.core import Handler
 
 

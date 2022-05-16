@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
+"""
+ a group of match the tell if match by key
+"""
 import abc
 import re
 from typing import Dict, List
@@ -9,9 +12,18 @@ from dfactory.core.utils import import_class
 
 
 class KeyMatcher(LoaderMixin):
+    """
+    KeyMatcher is a class to describe some rules to check whether
+    an item match these rules
+    """
 
     @abc.abstractmethod
     def iter(self, item: Dict):
+        """
+        do check  with rules
+        :param item: item to check
+        :return: True if item match rules otherwise False
+        """
         raise NotImplementedError("virtual function called")
 
     @staticmethod

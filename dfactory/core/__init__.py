@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
+"""
+ framework core
+"""
+
 from .base import Seeder, Handler, HandlerBase, CondHandler, LoaderMixin
 from .pipeline import Pipeline
 

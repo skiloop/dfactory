@@ -1,7 +1,9 @@
-#!/usr/bin/env python
-# coding=utf-8
-#
-#
+# -*- coding: utf-8 -*-
+
+"""
+Pipeline is a data flow pipeline with a group of handlers
+to operate actions on a flow of dict data
+"""
 from typing import Dict
 
 from .base import Handler, Seeder, LoaderMixin

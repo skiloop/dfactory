@@ -1,5 +1,13 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
+"""
+base classes
+
+Handler is a class describe a set of actions on data item
+
+Seeder is the data generator to generate data to feed the pipeline
+"""
+
 import abc
 from abc import ABC
 
@@ -88,13 +96,14 @@ class CondHandler(Handler):
     condition handler to handle part of the items passed in
     """
 
+    @abc.abstractmethod
     def check(self, item: dict) -> bool:
         """
-        check whether the item shall be operated
-        :param item: item
-        :return:
+        check if item shall be handled
+        :param item: item to check
+        :return: True if the item shell be handle otherwise False
         """
-        return True
+        raise NotImplementedError('virtual function called')
 
     @abc.abstractmethod
     def operate(self, item: dict) -> dict:
