@@ -144,3 +144,8 @@ class KeysPicker(CondHandler):
                 item[self.dst] = item[key]
                 break
         return item
+
+    def load_data(self, cfg: dict):
+        self.keys = cfg["keys"]
+        self.dst = cfg['dst']
+        self.cond = Match.from_dict(cfg.get("condition"))
