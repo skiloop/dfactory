@@ -114,3 +114,32 @@ class DictConverter(CondHandler):
 
     def check(self, item: dict) -> bool:
         return True if self.cond is None else self.cond.match(item)
+
+
+class KeysPicker(CondHandler):
+    """
+    pick a new value from some exist keys
+    """
+
+    def __init__(self, keys: List[str] = None, dst: str = None, condition: dict = None):
+        """
+        form a new value from some exist keys
+        :param keys: sorted keys to pick from,
+        :param dst: new field name
+        :param condition: form condition, a Match configure, when match new field name @param dst
+                will be add
+        """
+        super().__init__()
+        self.keys = keys
+        self.dst = dst
+        self.cond = Match.from_dict(condition)
+
+    def check(self, item: dict) -> bool:
+        return True if self.cond is None else self.cond.match(item)
+
+    def operate(self, item: dict) -> dict:
+        for key in self.keys:
+            if item.get(key) is not None:
+                item[self.dst] = item[key]
+                break
+        return item
