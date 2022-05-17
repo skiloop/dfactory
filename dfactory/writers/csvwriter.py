@@ -24,7 +24,7 @@ class CsvWriter(Handler):
         """check if writer ready to write"""
         return self.file is not None
 
-    def on_create(self):
+    def __enter__(self):
         """prepare data"""
         self.file = open(self.filename, "w", encoding="utf-8")
         self.prepare_format_fun()
@@ -38,7 +38,7 @@ class CsvWriter(Handler):
         else:
             self.format = lambda a: self.sep.join([str(a[k]) for k in a])
 
-    def on_destroy(self):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         """
         close file if necessary
         """

@@ -36,11 +36,9 @@ class Pipeline(LoaderMixin):
         action on exit
         :return: None
         """
-        if hasattr(self.seeder, "on_destroy"):
-            self.seeder.on_destroy()
         for operator in self.operators:
-            if hasattr(operator, 'on_destroy'):
-                operator.on_destroy()
+            if hasattr(operator, '__exit__'):
+                operator.__exit__()
 
     def __enter__(self):
         """
@@ -48,8 +46,8 @@ class Pipeline(LoaderMixin):
         :return: None
         """
         for operator in self.operators:
-            if hasattr(operator, 'on_create'):
-                operator.on_create()
+            if hasattr(operator, '__enter__'):
+                operator.__enter__()
 
     def add(self, operator: Handler):
         """
