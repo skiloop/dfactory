@@ -32,13 +32,9 @@ class Pipeline(LoaderMixin):
                     break
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        action on exit
-        :return: None
-        """
         for operator in self.operators:
             if hasattr(operator, '__exit__'):
-                operator.__exit__()
+                operator.__exit__(exc_type, exc_val, exc_tb)
 
     def __enter__(self):
         """
