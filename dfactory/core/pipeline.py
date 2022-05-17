@@ -31,7 +31,7 @@ class Pipeline(LoaderMixin):
                 if obj is None:
                     break
 
-    def exit(self):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         """
         action on exit
         :return: None
@@ -42,7 +42,7 @@ class Pipeline(LoaderMixin):
             if hasattr(operator, 'on_destroy'):
                 operator.on_destroy()
 
-    def enter(self):
+    def __enter__(self):
         """
         action before pipeline operator starts up
         :return: None
@@ -87,7 +87,6 @@ class Pipeline(LoaderMixin):
         start pipeline
         :return: None
         """
-        self.enter()
-        if len(self.operators) > 0:
-            self.handle()
-        self.exit()
+        with self:
+            if len(self.operators) > 0:
+                self.handle()
