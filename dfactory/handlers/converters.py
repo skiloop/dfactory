@@ -6,7 +6,7 @@ Converters are item modifiers
 
 from typing import List
 
-from dfactory.core import Handler, CondHandler
+from dfactory.core import CondHandler
 from dfactory.handlers.matches import Match
 from dfactory.handlers.updaters import Updater
 from dfactory.utils.jsonutils import read_json
@@ -18,6 +18,7 @@ class Converter(CondHandler):
     """
 
     def __init__(self, match: Match = None, updaters: List[Updater] = None):
+        super().__init__()
         self.match = match
         self.updaters = updaters
 
@@ -58,12 +59,12 @@ class Converter(CondHandler):
         self.updaters = updaters
 
 
-class DictConverter(Handler):
+class DictConverter(CondHandler):
     """
     convert one field of data with dict
     """
 
-    def __init__(self, key: str = None, dst: str = None, mapper=None, default=None):
+    def __init__(self, **kwargs):
         """
         Convert item with specify data
         :param key: source key
@@ -73,14 +74,15 @@ class DictConverter(Handler):
         :param default: default type, describe how to set value if item[@param key]
                 not in @param mapper. If default is None then use item[@param key]
                 otherwise use the specified value
+        :param cond: convert condition, a Match config, if match then apply the action on item
         """
         super().__init__()
-        self.key = key
-        self.dst = dst
-        self.default = default
-        if isinstance(mapper, str):
-            mapper = read_json(mapper)
-        self.mapper = {} if mapper is None else mapper
+        self.key = None
+        self.dst = None
+        self.default = None
+        self.mapper = {}
+        self.cond = None
+        self.load_data(kwargs)
 
     def load_data(self, cfg: dict):
         """
@@ -93,10 +95,11 @@ class DictConverter(Handler):
             mapper = read_json(mapper)
         self.mapper = mapper
         self.key = cfg['key']
-        self.dst = cfg.get("dst", cfg["key"])
+        self.dst = cfg.get("dst", self.key)
         self.default = cfg.get("default", self.default)
+        self.cond = Match.from_dict(cfg.get("condition"))
 
-    def handle(self, item: dict) -> dict:
+    def operate(self, item: dict) -> dict:
         """
         convert item with dict mapper
         :param item: item to he convert
@@ -107,3 +110,6 @@ class DictConverter(Handler):
         else:
             item[self.dst] = self.mapper[item[self.key]]
         return item
+
+    def check(self, item: dict) -> bool:
+        return True if self.cond is None else self.cond.match(item)

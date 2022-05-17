@@ -10,6 +10,7 @@ import abc
 import re
 
 from dfactory.core import LoaderMixin
+from dfactory.core.utils import import_class
 
 
 class Match(LoaderMixin):
@@ -17,8 +18,22 @@ class Match(LoaderMixin):
     Match class to tell if an item is matched
     """
 
+    @staticmethod
+    def from_dict(cfg: dict):
+        """
+      create a new Match object from config
+      :param cfg: data to create new Match object
+      :return: new object if success otherwise None
+      """
+        cfg_class = import_class(cfg["class"])
+        if not issubclass(cfg_class, Match):
+            return None
+        obj = cfg_class()
+        obj.load_data(cfg)
+        return obj
+
     @abc.abstractmethod
-    def match(self, item: dict):
+    def match(self, item: dict) -> bool:
         """
         match function, tell if an item is match
         :param item: item to check
