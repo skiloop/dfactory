@@ -7,22 +7,7 @@ setup.py
 import platform
 from os.path import join, dirname
 
-PY_VERSION = platform.python_version()
-if PY_VERSION[0] == "3" and int(PY_VERSION[1]) >= 10:
-    from setuptools import setup, find_packages
-else:
-    try:
-        from setuptools import setup, find_packages
-    except ImportError:
-        from distutils.core import setup
-
-
-        def find_packages(exclude=None):
-            """ find packages"""
-            if exclude is None:
-                exclude = []
-            packages = ['dfactory', 'dfactory.framework']
-            return list(filter(lambda a: a not in exclude, packages))
+from setuptools import setup, find_packages
 
 NAME = 'dfactory'
 DESCRIPTION = 'a data pipeline framework'
