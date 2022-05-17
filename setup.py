@@ -1,4 +1,8 @@
-#!/usr/bin/env python
+"""
+setup.py
+"""
+
+# !/usr/bin/env python
 # coding=utf-8
 import platform
 from os.path import join, dirname
@@ -10,6 +14,7 @@ except ImportError:
 
 
     def find_packages(exclude=None):
+        """ find packages"""
         if exclude is None:
             exclude = []
         packages = ['dfactory', 'dfactory.framework']
@@ -22,8 +27,10 @@ EMAIL = 'skiloop@gmail.com'
 AUTHOR = 'skiloop'
 SYSTEM = platform.system()
 
-with open(join(dirname(__file__), 'dfactory/VERSION'), 'rb') as f:
-    VERSION = f.read().decode('ascii').strip()
+with open(join(dirname(__file__), 'dfactory/VERSION'), 'rb') as fversion:
+    VERSION = fversion.read().decode('ascii').strip()
+with open('README.md', encoding="utf-8") as frm:
+    long_desc = frm.read()
 setup(
     name=NAME,
     version=VERSION,
@@ -33,7 +40,7 @@ setup(
         'Tracker': 'https://github.com/skiloop/dfactory/issues',
     },
     description=DESCRIPTION,
-    long_description=open('README.md').read(),
+    long_description=long_desc,
     author=AUTHOR,
     maintainer=AUTHOR,
     maintainer_email=EMAIL,
