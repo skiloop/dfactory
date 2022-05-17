@@ -74,7 +74,8 @@ class DictConverter(CondHandler):
         :param default: default type, describe how to set value if item[@param key]
                 not in @param mapper. If default is None then use item[@param key]
                 otherwise use the specified value
-        :param cond: convert condition, a Match config, if match then apply the action on item
+        :param condition: convert condition, a Match config,
+                if match then apply the action on item
         """
         super().__init__()
         self.key = None
