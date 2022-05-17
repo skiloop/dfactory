@@ -83,7 +83,8 @@ class DictConverter(CondHandler):
         self.default = None
         self.mapper = {}
         self.cond = None
-        self.load_data(kwargs)
+        if len(kwargs) > 0:
+            self.load_data(kwargs)
 
     def load_data(self, cfg: dict):
         """
