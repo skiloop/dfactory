@@ -25,6 +25,8 @@ class Match(LoaderMixin):
       :param cfg: data to create new Match object
       :return: new object if success otherwise None
       """
+        if "class" not in cfg:
+            return None
         cfg_class = import_class(cfg["class"])
         if not issubclass(cfg_class, Match):
             return None
