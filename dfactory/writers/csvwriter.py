@@ -13,7 +13,7 @@ class CsvWriter(Handler):
     """
 
     def __init__(self, **kwargs):
-        self.filename = kwargs["path"]
+        self.filename = kwargs.get("path", "")
         self.file = None
         self.sep = kwargs.get('separator', ",")
         self.headers = kwargs.get('headers')
