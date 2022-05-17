@@ -17,7 +17,6 @@ class CsvWriter(Handler):
         self.file = None
         self.sep = kwargs.get('separator', ",")
         self.headers = kwargs.get('headers')
-        self.keys = kwargs.get('keys')
         self.format = None
 
     def is_created(self) -> bool:
@@ -33,8 +32,8 @@ class CsvWriter(Handler):
 
     def prepare_format_fun(self):
         """ prepare output format"""
-        if self.keys is not None:
-            self.format = lambda a: self.sep.join([str(a[k]) for k in self.keys])
+        if self.headers is not None:
+            self.format = lambda a: self.sep.join([str(a[k]) for k in self.headers])
         else:
             self.format = lambda a: self.sep.join([str(a[k]) for k in a])
 
@@ -63,7 +62,6 @@ class CsvWriter(Handler):
         """
         self.file = None
         self.filename = cfg.get("path")
-        self.keys = cfg.get("keys")
         self.headers = cfg.get("headers")
         self.sep = cfg.get('separator', ",")
 
