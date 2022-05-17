@@ -61,7 +61,7 @@ class CsvWriter(Handler):
         :param cfg: config data
         :return: None
         """
-        self.on_destroy()
+        self.file = None
         self.filename = cfg.get("path")
         self.keys = cfg.get("keys")
         self.headers = cfg.get("headers")
