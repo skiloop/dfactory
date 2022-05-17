@@ -63,10 +63,23 @@ class DictConverter(Handler):
     convert one field of data with dict
     """
 
-    def __init__(self, key: str = None, dst: str = None, mapper: dict = None):
+    def __init__(self, key: str = None, dst: str = None, mapper=None, default=None):
+        """
+        Convert item with specify data
+        :param key: source key
+        :param dst: target key leave empty to update item[@param key]
+        :param mapper: data map, dict or string, if mapper is a string
+                        then it will be regard as json file
+        :param default: default type, describe how to set value if item[@param key]
+                not in @param mapper. If default is None then use item[@param key]
+                otherwise use the specified value
+        """
         super().__init__()
         self.key = key
         self.dst = dst
+        self.default = default
+        if isinstance(mapper, str):
+            mapper = read_json(mapper)
         self.mapper = {} if mapper is None else mapper
 
     def load_data(self, cfg: dict):
@@ -81,6 +94,7 @@ class DictConverter(Handler):
         self.mapper = mapper
         self.key = cfg['key']
         self.dst = cfg.get("dst", cfg["key"])
+        self.default = cfg.get("default", self.default)
 
     def handle(self, item: dict) -> dict:
         """
@@ -88,5 +102,8 @@ class DictConverter(Handler):
         :param item: item to he convert
         :return: handled item
         """
-        item[self.dst] = self.mapper.get(item[self.key], item[self.key])
+        if item[self.key] not in self.mapper:
+            item[self.dst] = item[self.key] if self.default is None else self.default
+        else:
+            item[self.dst] = self.mapper[item[self.key]]
         return item
