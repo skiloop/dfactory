@@ -26,13 +26,10 @@ class CsvWriter(Handler):
 
     def on_create(self):
         """prepare data"""
-        try:
-            self.file = open(self.filename, "w", encoding="utf-8")
-            self.prepare_format_fun()
-            if self.headers is not None:
-                self.file.write(self.sep.join(self.headers) + "\n")
-        except IOError:
-            pass
+        self.file = open(self.filename, "w", encoding="utf-8")
+        self.prepare_format_fun()
+        if self.headers is not None:
+            self.file.write(self.sep.join(self.headers) + "\n")
 
     def prepare_format_fun(self):
         """ prepare output format"""
