@@ -30,6 +30,7 @@ setup(
     },
     description=DESCRIPTION,
     long_description=long_desc,
+    long_description_content_type="text/markdown",
     author=AUTHOR,
     maintainer=AUTHOR,
     maintainer_email=EMAIL,
