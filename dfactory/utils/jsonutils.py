@@ -18,11 +18,28 @@ class JsonEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 
-def read_json(src: str):
+def read_json(filename, line_by_line=False):
     """
-    read json file into dict
-    :param src: filename
-    :return: dict read from json file
+    read json file
+    :param filename: json file
+    :param line_by_line: file with format of json one item per line
+    :return: list or dict
     """
-    with open(src, encoding="utf-8") as fin:
-        return json.loads((fin.read()))
+    with open(filename, encoding="utf-8") as fin:
+        if not line_by_line:
+            return json.loads(fin.read())
+        array = []
+        for line in fin:
+            array.append(json.loads(line))
+        return array
+
+
+def read_json_by_line(filename):
+    """
+    read json file with format one json item per line
+    :param filename: json file
+    :return: generator of json item
+    """
+    with open(filename, encoding="utf-8") as fin:
+        for line in fin:
+            yield json.loads(line.strip())
