@@ -4,6 +4,18 @@
 json utils
 """
 import json
+from json import JSONEncoder
+
+
+class JsonEncoder(JSONEncoder):
+    """json encoder"""
+
+    def default(self, o):
+        if o.__class__.__name__ in ['int64', "int32"]:
+            return int(o)
+        if o.__class__.__name__ in ['float64', "float32"]:
+            return float(o)
+        return JSONEncoder.default(self, o)
 
 
 def read_json(src: str):
