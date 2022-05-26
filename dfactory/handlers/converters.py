@@ -109,6 +109,10 @@ class DictConverter(CondHandler):
         """
         if item[self.key] not in self.mapper:
             item[self.dst] = item[self.key] if self.default is None else self.default
+        elif isinstance(self.key, list):
+            key = ".".join([str(item.get(k, "")) for k in self.key])
+            if key in self.mapper:
+                item[self.dst] = self.mapper[key]
         else:
             item[self.dst] = self.mapper[item[self.key]]
         return item
