@@ -72,8 +72,10 @@ class DictConverter(CondHandler):
         :param mapper: data map, dict or string, if mapper is a string
                         then it will be regard as json file
         :param default: default type, describe how to set value if item[@param key]
-                not in @param mapper. If default is None then use item[@param key]
-                otherwise use the specified value
+                not in @param mapper.
+                If default is None, use item[@param dst] if @param dst
+                in item  otherwise use item[@param key]
+                if default is not None then use the specified value
         :param condition: convert condition, a Match config,
                 if match then apply the action on item
         """
@@ -81,6 +83,7 @@ class DictConverter(CondHandler):
         self.key = None
         self.dst = None
         self.default = None
+        self.replace = True
         self.mapper = {}
         self.cond = None
         if len(kwargs) > 0:
@@ -98,6 +101,7 @@ class DictConverter(CondHandler):
         self.mapper = mapper
         self.key = cfg['key']
         self.dst = cfg.get("dst", self.key)
+        self.replace = cfg.get('replace', self.replace)
         self.default = cfg.get("default", self.default)
         self.cond = Match.from_dict(cfg.get("condition"))
 
@@ -107,12 +111,19 @@ class DictConverter(CondHandler):
         :param item: item to he convert
         :return: handled item
         """
-        if item[self.key] not in self.mapper:
-            item[self.dst] = item[self.key] if self.default is None else self.default
-        elif isinstance(self.key, list):
-            key = ".".join([str(item.get(k, "")) for k in self.key])
-            if key in self.mapper:
-                item[self.dst] = self.mapper[key]
+        if isinstance(self.key, list):
+            value = self.mapper
+            for key in self.key:
+                value = value.get(item.get(key, ""))
+                if value is None:
+                    break
+            if value is not None:
+                item[self.dst] = value
+        elif item[self.key] not in self.mapper:
+            if self.default is None:
+                item[self.dst] = item[self.dst] if self.dst in item else item[self.key]
+            else:
+                item[self.dst] = self.default
         else:
             item[self.dst] = self.mapper[item[self.key]]
         return item
