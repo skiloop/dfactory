@@ -69,6 +69,31 @@ class KeyMatch(Match):
         self.value = cfg["value"]
 
 
+class DictMatch(Match):
+    """
+    DictMatch
+    match which has the every key from a dict, and match corresponding value
+    """
+
+    def __init__(self, data: dict = None):
+        super().__init__()
+        self.data = data if data is not None else {}
+
+    def match(self, item: dict):
+        for key, value in self.data.items():
+            if key not in item or value != item[key]:
+                return False
+        return True
+
+    def load_data(self, cfg: dict):
+        """
+        load data from config
+        :param cfg: config data
+        :return: None
+        """
+        self.data = cfg.get('data', {})
+
+
 class TrueMatch(Match):
     """
     TrueMatch match on every item
