@@ -3,11 +3,12 @@ JsonWriter
 """
 import json
 
-from dfactory.core import Handler
+from dfactory.core import CondHandler
+from dfactory.handlers.matches import Match
 from dfactory.utils.jsonutils import JsonEncoder
 
 
-class JsonWriter(Handler):
+class JsonWriter(CondHandler):
     """
     JsonWriter
     write item to json file
@@ -21,6 +22,7 @@ class JsonWriter(Handler):
         self.file = None
         self.headers = kwargs.get('headers', [])
         self.save_key = None
+        self.match = None
 
     def is_created(self) -> bool:
         """check if writer ready to write"""
@@ -37,6 +39,9 @@ class JsonWriter(Handler):
         if self.file is not None:
             self.file.close()
         self.file = None
+
+    def check(self, item: dict) -> bool:
+        return self.match is None or self.match.match(item)
 
     @staticmethod
     def from_dict(cfg: dict):
@@ -57,8 +62,10 @@ class JsonWriter(Handler):
         self.filename = cfg.get("path")
         self.headers = cfg.get("headers", [])
         self.save_key = cfg.get('save_key')
+        match = cfg.get('match')
+        self.match = None if match is None else Match.from_dict(match)
 
-    def handle(self, item: dict):
+    def operate(self, item: dict):
         """
         save item to csv file
         :param item: item to handle
