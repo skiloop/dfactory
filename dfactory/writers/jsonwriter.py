@@ -12,6 +12,7 @@ class JsonWriter(Handler):
     JsonWriter
     write item to json file
     one item per line
+    if save_key is specified the save item[save_key] instead of whole object
     """
 
     def __init__(self, **kwargs):
@@ -19,6 +20,7 @@ class JsonWriter(Handler):
         self.filename = kwargs.get("path", "")
         self.file = None
         self.headers = kwargs.get('headers', [])
+        self.save_key = None
 
     def is_created(self) -> bool:
         """check if writer ready to write"""
@@ -54,6 +56,7 @@ class JsonWriter(Handler):
         self.file = None
         self.filename = cfg.get("path")
         self.headers = cfg.get("headers", [])
+        self.save_key = cfg.get('save_key')
 
     def handle(self, item: dict):
         """
@@ -62,7 +65,8 @@ class JsonWriter(Handler):
         :return: the same item
         """
         try:
-            obj = item if len(self.headers) == 0 else {k: item[k] for k in self.headers}
+            data = item if self.save_key is None else item[self.save_key]
+            obj = data if len(self.headers) == 0 else {k: data[k] for k in self.headers}
             self.file.write(json.dumps(obj, ensure_ascii=False, cls=JsonEncoder))
             self.file.write("\n")
         except IOError:
