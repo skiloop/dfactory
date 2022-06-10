@@ -115,7 +115,7 @@ class RegexMatch(Match):
 
     def __init__(self, key=None, pattern=None, flag=0):
         self.key = key
-        self.pattern = self.fill_pattern(pattern, flag)
+        self.pattern = None if pattern is None else self.fill_pattern(pattern, flag)
 
     @staticmethod
     def fill_pattern(pattern, flag=0):
