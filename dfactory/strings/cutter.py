@@ -15,20 +15,21 @@ class StringCutter(Handler):
         self.keys = cfg['keys']
 
     @staticmethod
-    def cut(src, start, end):
+    def cut(src, start, end, append: str = None):
         """
         cut string
         :param src: string to cut
         :param start: start pos to cut
         :param end: end pos (end not include in sub string)
+        :param append: append to result
         :return: is src is None or empty return original else return src[start:end]
         """
         if src is None or src == "":
             return src
-        return src[start:end]
+        dst = src[start:end]
+        return dst if append is None else dst + append
 
     def handle(self, item: dict) -> dict:
-        for key in self.keys:
-            item[key] = self.cut(item[key], self.keys[key].get('start', 0), self.keys[key]['end'])
-
+        for key, data in self.keys.items():
+            item[key] = self.cut(item[key], data.get('start', 0), data['end'], data.get("append"))
         return item
