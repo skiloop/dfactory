@@ -185,11 +185,11 @@ class NotMatch(Match):
     """NOT operator for Match"""
 
     def __init__(self, match: Match = None):
-        self.match = match
+        self.match_obj = match
 
     def match(self, item: dict):
-        return not self.match.match(item)
+        return not self.match_obj.match(item)
 
     def load_data(self, cfg: dict):
         """load NotMatch from config"""
-        self.match = self.from_dict(cfg["a"])
+        self.match_obj = self.from_dict(cfg["a"])
