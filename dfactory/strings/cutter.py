@@ -27,7 +27,7 @@ class StringCutter(Handler):
         if src is None or src == "":
             return src
         dst = src[start:end]
-        return dst if append is None and len(src) > end else dst + append
+        return dst if append is None and len(src) <= end else dst + append
 
     def handle(self, item: dict) -> dict:
         for key, data in self.keys.items():
