@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dfactory"
+version = "0.1.7"
+description = "a data pipeline framework"
+license = { text = "MIT License" }
+readme = { file = "README.md", content-type = "text/markdown" }
+keywords = ["data pipeline", "data flow"]
+
+authors = [
+    { name = "skiloop", email = "skiloop@gmail.com" }
+]
+
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.6"
+
+[project.urls]
+homepage = "https://github.com/skiloop/dfactory"
+repository = "https://github.com/skiloop/dfactory"
+"Tracker" = "https://github.com/skiloop/dfactory/issues"
