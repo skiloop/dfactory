@@ -8,6 +8,17 @@ a data pipeline framework
 
 # HOW TO USE
 
+## install
+```shell
+pip install dfactory
+```
+or install from source
+
+```shell
+pip install .
+```
+
+## examples
 example 1:
 
 ```python
