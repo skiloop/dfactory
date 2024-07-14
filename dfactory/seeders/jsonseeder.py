@@ -21,8 +21,7 @@ class JsonSeeder(Seeder):
 
     def iter(self) -> dict:
         if self.__is_list:
-            for item in read_json_by_line(self.path):
-                yield item
+            yield from read_json_by_line(self.path)
         else:
             data = read_json(self.path)
             for key, values in data.items():
